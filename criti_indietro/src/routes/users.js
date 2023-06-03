@@ -24,7 +24,7 @@ router.post('/register', async(req, res) => {
 
 });
 
-router.get('/login', async(req,res) => {
+router.post('/login', async(req,res) => {
     const {username, password} = req.body;
 
     const user = await UserModel.findOne({username});
@@ -35,11 +35,13 @@ router.get('/login', async(req,res) => {
 
     const isPassValid = await bcrypt.compare(password, user.password);
     if(!isPassValid)
-    {
+    {  
         return res.json({"Message": "Password is incorrect"})
     }
 
-    const token = jwt.sign({id: id})
+    const token = jwt.sign({id: user._id }, "secret")
+
+    res.json({token, userId: user._id})
 
 
 });
